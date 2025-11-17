@@ -1,0 +1,23 @@
+# Core Python environment
+# python=3.11
+numpy
+pandas
+scikit-learn
+scipy
+
+# Text processing
+nltk
+regex
+
+# Visualization (optional, for cluster plotting)
+matplotlib
+seaborn
+wordcloud
+
+# Utilities
+tqdm
+joblib
+ipykernel
+
+# how to install:
+# pip install -r requirements.txt

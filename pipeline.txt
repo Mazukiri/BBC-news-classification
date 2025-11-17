@@ -1,0 +1,53 @@
+1. Mô tả bộ dữ liệu bbc_text_cls.csv
+
+Nguồn: BBC Text Classification Dataset
+Kích thước: hơn 2200 văn bản tin tức
+Cấu trúc file CSV:
+
+Column	Description
+text	Nội dung văn bản của bài báo
+labels	Nhãn của bài báo (ví dụ: business, entertainment, politics, sport, tech, .....)
+
+Mục tiêu: Xây dựng mô hình phân loại văn bản dựa trên nội dung tin tức để dự đoán chuyên mục (category).
+
+2. Pipeline tổng quan
+Giai đoạn 1: Làm sạch dữ liệu
+- Chuyển về chữ thường (lowercase)
+- Loại bỏ ký tự đặc biệt, và dấu câu
+- Loại bỏ stopwords tiếng Anh
+- Áp dụng lemmatization
+- Ngoài ra, qua quan sát từ phân tích dữ liệu gốc, phần lớn văn bản có độ dài nằm trong khoảng 0 - 1000 từ, 
+do đó, ta sẽ bỏ đi các văn bản có độ dài > 1000 từ (chỉ có 23 văn bản trong tổng số hơn 2k văn bản) để loại bỏ outlier
+
+Giai đoạn 2️: Trích xuất đặc trưng
+
+Sử dụng TF-IDF Vectorizer để biểu diễn văn bản thành vector số.
+
+Giới hạn số lượng đặc trưng (VD: max_features=3000) để tránh overfitting.
+
+Giai đoạn 3: Giảm chiều dữ liệu
+
+Áp dụng PCA (Principal Component Analysis) -> giảm chiều vector TF-IDF.
+
+Áp dụng thêm LSA (Latent Semantic Analysis = TruncatedSVD) để nắm bắt ngữ nghĩa tiềm ẩn.
+
+Giai đoạn 4️: Phân cụm (Clustering)
+
+Thực hiện K-Means để chia cụm tin tức.
+
+Thực hiện GMM (Gaussian Mixture Model) để khám phá cấu trúc dữ liệu tiềm ẩn.
+
+(Phân cụm ở đây không phục vụ huấn luyện mô hình chính, mà giúp phân tích cấu trúc hoặc visualization).
+
+Giai đoạn 5️: Phân loại (Classification)
+
+Huấn luyện và so sánh hiệu năng 3 mô hình 
+(lần lượt với bộ dữ liệu sạch và bộ đữ liệu sạch giảm chiều (cả PCA và LSA) để so sánh)
+(tập train - test được chia theo tỷ lệ 8:2)
+
+- Multinomial Naive Bayes
+- Decision Tree
+- Logistic Regression
+
+Tính kết quả trên cả 3 bộ vừa so sánh được hiệu quả của 3 mô hình phân loại, 
+vừa so sánh được khả năng giữ lại ngữ nghĩa văn bản sau khi giảm chiều của LSA và PCA
